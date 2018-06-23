@@ -1,0 +1,5 @@
+namespace: dumbo
+apps:
+  - name: a
+    versions: [v1]
+

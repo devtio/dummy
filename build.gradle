@@ -1,0 +1,53 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.2.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'io.devtio.dummy'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    compile group: 'io.kubernetes', name: 'client-java', version: '1.0.0'
+
+}
+
+task prepareDockerFile(type: Copy, dependsOn: build) {
+    from ("Dockerfile") {
+        filter {
+            it.replaceAll('<app-jar>', jar.archiveName)
+        }
+    }
+    from ("${jar.archivePath}")
+    into "${project.buildDir}/docker"
+}
+
+task buildImage(type: Exec, dependsOn: prepareDockerFile) {
+    commandLine 'ls', '-la'
+    commandLine '/usr/local/bin/docker', 'build', '-t', 'devtio/dummy:latest', "${project.buildDir}/docker/"
+
+    doFirst {
+        println "docker build -t devtio/dummy:latest ${project.buildDir}/docker/"
+    }
+}

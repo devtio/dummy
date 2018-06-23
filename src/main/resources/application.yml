@@ -1,0 +1,7 @@
+server:
+  port: 8090
+
+app:
+  id: ${APP_ID:not_set}
+  version: ${APP_VERSION:not_set}
+

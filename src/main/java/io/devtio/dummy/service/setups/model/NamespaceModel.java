@@ -12,8 +12,8 @@ public class NamespaceModel {
         this.apps = new LinkedList<>();
     }
 
-    public void addApp(String name, List<String> versions) {
-        this.apps.add(new AppModel(name, versions));
+    public void addApp(AppModel appModel) {
+        this.apps.add(appModel);
     }
 
     public String getName() {

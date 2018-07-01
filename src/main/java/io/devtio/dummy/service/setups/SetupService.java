@@ -33,10 +33,12 @@ public class SetupService {
         createNamespace(namespace);
         namespaceModel.getApps().forEach(app -> {
             String appName = app.getName();
-            app.getVersions().forEach(version -> {
-                createDeployment(namespace, appName, version);
-                createService(namespace, appName, version);
-            });
+            String version = app.getVersion();
+            createDeployment(namespace, appName, version);
+            createService(namespace, appName, version);
+            if (app.getRouting().isExternalService()) {
+                createExternalService(namespace, appName, version);
+            }
         });
     }
 
@@ -52,6 +54,11 @@ public class SetupService {
 
             V1ObjectMeta meta = new V1ObjectMeta();
             meta.setName(namespaceName);
+
+            Map<String, String> labels = new HashMap<>();
+            labels.put("istio-injection", "enabled");
+            meta.setLabels(labels);
+
             namespace.setMetadata(meta);
             api.createNamespace(namespace, "true");
 
@@ -63,9 +70,18 @@ public class SetupService {
         }
     }
 
+    private void createExternalService(String namespace, String targetApp, String targetVersion) {
+        createService(namespace, targetApp, targetVersion, "NodePort");
+    }
+
     private void createService(String namespace, String targetApp, String targetVersion) {
+        createService(namespace, targetApp, targetVersion, "ClusterIP");
+    }
+
+    private void createService(String namespace, String targetApp, String targetVersion, String type) {
         try {
-            String name = targetApp + "-" + targetVersion;
+            String suffix = type.equals("NodePort") ? "-external" : "";
+            String name = targetApp + "-" + targetVersion + suffix;
 
             V1Service service;
             try {
@@ -99,7 +115,7 @@ public class SetupService {
             spec.setSelector(selector);
 
             spec.setSessionAffinity("None");
-            spec.setType("ClusterIP");
+            spec.setType(type);
 
             api.createNamespacedService(namespace, service, "true");
 
@@ -145,10 +161,14 @@ public class SetupService {
 
             V1PodSpec podSpec = new V1PodSpec();
 
-            V1Container container = new V1Container();
-            container.setName("app");
-            container.setImage("devtio/dummy:latest");
-            container.setImagePullPolicy("IfNotPresent");
+            V1Container container = new V1Container()
+                .name("app")
+                .image("devtio/dummy:latest")
+                .imagePullPolicy("IfNotPresent");
+
+            container
+                .addEnvItem(new V1EnvVar().name("APP_ID").value(app))
+                .addEnvItem(new V1EnvVar().name("APP_VERSION").value(version));
 
             V1Probe readyLivenessProbe = new V1Probe();
             readyLivenessProbe.setInitialDelaySeconds(50);
@@ -185,5 +205,9 @@ public class SetupService {
             LOGGER.error("Error creating a deployment: ", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private void createGateway(String namespace, String host) {
+
     }
 }

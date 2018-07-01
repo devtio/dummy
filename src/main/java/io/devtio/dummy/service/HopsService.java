@@ -27,6 +27,9 @@ public class HopsService {
     @Value("${app.version}")
     String appVersion;
 
+    @Value("${server.port:8080}")
+    Integer port;
+
     @Autowired
     private RestTemplate template;
 
@@ -55,7 +58,7 @@ public class HopsService {
 
             HttpEntity entity = new HttpEntity(headers);
 
-            String url = "http://" + nextHop + ":8080/hops?path=" + String.join(",", nextPath);
+            String url = "http://" + nextHop + ":" + port + "/hops?path=" + String.join(",", nextPath);
             try {
                 ResponseEntity<List<Hop>> response =
                         template.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<List<Hop>>() {

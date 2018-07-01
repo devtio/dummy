@@ -35,3 +35,35 @@ You can configure what you want to setup in a 'scenario' file. Eg. scenario1.yml
 At the moment, to run a scenario, you have to go to the "ScenarioRunnerTest" and uncomment the test there, then run it.
 This will use your currently logged in Kube credentials to execute and setup the desired scenario.
 
+
+## How to call it ##
+
+### Get the Deployed Host/Port ###
+
+#### If you're using NodePort to expose your service ####
+
+You can setup to use `NodePort` in your scenario.yml file by setting `externalService: true`
+
+```yaml
+
+namespace: dummy
+apps:
+  -
+    name: a
+    version: v1
+    routing:
+      externalService: true
+```
+
+Then see the value of the `NodePort` by viewing the services
+
+```
+kubectl get services -n dummy
+```
+
+Then call the dummy service
+
+```
+http://192.168.99.100:30290/hops?path=a-v1,b-v1,a-v2
+```
+

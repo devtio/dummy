@@ -4,18 +4,24 @@ import java.util.List;
 
 public class AppModel {
     private String name;
-    private List<String> versions;
+    private String version;
+    private RoutingModel routing;
 
-    public AppModel(String name, List<String> versions) {
+    public AppModel(String name, String version, RoutingModel routing) {
         this.name = name;
-        this.versions = versions;
+        this.version = version;
+        this.routing = routing;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<String> getVersions() {
-        return versions;
+    public String getVersion() {
+        return version;
+    }
+
+    public RoutingModel getRouting() {
+        return routing;
     }
 }

@@ -1,0 +1,327 @@
+# kubectl apply -f samples/a/setup.yaml
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: a
+    version: v1
+  name: a-v1
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: a
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: a
+        version: v1
+    spec:
+      containers:
+      - image: devtio/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: a
+    version: v2
+  name: a-v2
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: a
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: a
+        version: v2
+    spec:
+      containers:
+      - image: devtio/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: b
+    version: v1
+  name: b-v1
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: b
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: b
+        version: v1
+    spec:
+      containers:
+      - image: devtio/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: b
+    version: v2
+  name: b-v2
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: b
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: b
+        version: v2
+    spec:
+      containers:
+      - image: devtio/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: a-v1
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: a
+    version: v1
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: a-v2
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: a
+    version: v2
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: b-v1
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: b
+    version: v1
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: b-v2
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: b
+    version: v2
+  type: ClusterIP
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: b-v2
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: b
+    version: v2
+  type: ClusterIP
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: dummy-gateway
+  namespace: dummy
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "dummy-gateway.192.168.99.100.nip.io"
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: a-gateway-vs
+  namespace: dummy
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dummy-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+      - destination:
+          host: a-v1.dummy.svc.cluster.local
+          port:
+            number: 8090

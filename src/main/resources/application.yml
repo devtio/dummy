@@ -5,3 +5,9 @@ app:
   id: ${APP_ID:not_set}
   version: ${APP_VERSION:not_set}
 
+
+spring:
+  jackson:
+    serialization.indent_output: true
+    default-property-inclusion: non_null
+

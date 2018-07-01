@@ -1,6 +1,8 @@
 package io.devtio.dummy.service.setups;
 
+import io.devtio.dummy.service.setups.model.AppModel;
 import io.devtio.dummy.service.setups.model.NamespaceModel;
+import io.devtio.dummy.service.setups.model.RoutingModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,14 @@ public class ScenarioLoader {
             List<Map<String, Object>> apps = (List<Map<String, Object>>) scenarioAsMap.get("apps");
             apps.forEach(app -> {
                 String appName = (String) app.get("name");
-                List<String> versions = (List<String>) app.get("versions");
+                String version = (String) app.get("version");
 
-                namespaceModel.addApp(appName, versions);
+                Map<String, Object> routingMap = (Map<String, Object>) app.get("routing");
+                RoutingModel routingModel = new RoutingModel(routingMap);
+
+                AppModel appModel = new AppModel(appName, version, routingModel);
+
+                namespaceModel.addApp(appModel);
             });
 
             return namespaceModel;

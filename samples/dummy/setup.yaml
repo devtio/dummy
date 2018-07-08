@@ -1,0 +1,427 @@
+
+# INSTALL
+# kubectl apply -f samples/a/setup.yaml
+#
+# TESTS
+#
+# curl -vvk http://dummy-gateway.192.168.99.100.nip.io:31380/hops?a,b
+# curl -vvk -H "x-client-id: fancy" http://dummy-gateway.192.168.99.100.nip.io:31380/hops?a,b
+#
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: dummy
+spec:
+  finalizers:
+  - kubernetes
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: a
+    version: v1
+  name: a-v1
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: a
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: a
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: APP_ID
+          value: a
+        - name: APP_VERSION
+          value: v1
+        image: gcr.io/devtio-dev/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: a
+    version: v2
+  name: a-v2
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: a
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: a
+        version: v2
+    spec:
+      containers:
+      - env:
+        - name: APP_ID
+          value: a
+        - name: APP_VERSION
+          value: v2
+        image: gcr.io/devtio-dev/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: b
+    version: v1
+  name: b-v1
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: b
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: b
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: APP_ID
+          value: b
+        - name: APP_VERSION
+          value: v1
+        image: gcr.io/devtio-dev/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: b
+    version: v2
+  name: b-v2
+  namespace: dummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: b
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: b
+        version: v2
+    spec:
+      containers:
+      - env:
+        - name: APP_ID
+          value: b
+        - name: APP_VERSION
+          value: v2
+        image: gcr.io/devtio-dev/dummy:latest
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: app
+        ports:
+        - containerPort: 8090
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /actuator/health
+            port: 8090
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: a
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: a
+  type: ClusterIP
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: b
+  namespace: dummy
+spec:
+  ports:
+  - name: http
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: b
+  type: ClusterIP
+
+
+#
+# Setup Gateway and first level of VirtualServices that are attached to the gateway
+#
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: dummy-gateway
+  namespace: dummy
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "dummy.35.197.185.132.nip.io"
+
+
+---
+#
+# Match anything coming into the Gateway, and append new release headers
+#
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dummy-vs
+  namespace: dummy
+spec:
+  hosts:
+  - dummy.35.197.185.132.nip.io
+  gateways:
+  - dummy-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /hops
+        headers:
+          x-client-id:
+            exact: 'fancy'
+      route:
+      - destination:
+          host: a
+          subset: v2
+      appendHeaders:
+        devtio: release1
+        gateway-match-fancy: gateway
+    - match:
+      - uri:
+          prefix: /hops
+      route:
+      - destination:
+          host: a
+          subset: v1
+      appendHeaders:
+        gateway-default: gateway
+
+---
+#
+# Match anything coming into the 'A' service, and direct to the correct version
+#
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: a
+  namespace: dummy
+spec:
+  hosts:
+  - a
+  http:
+    - match:
+      - headers:
+          devtio:
+            exact: release1
+      route:
+      - destination:
+          host: a
+          subset: v2
+      appendHeaders:
+        a-from-release-header: a
+    - route:
+      - destination:
+          host: a
+          subset: v1
+      appendHeaders:
+        a-from-default-routing: a
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: a
+  namespace: dummy
+spec:
+  host: a
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+
+---
+#
+# Match anything coming into the 'B' service, and direct to the correct version
+#
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: b
+  namespace: dummy
+spec:
+  hosts:
+  - b
+  http:
+  - match:
+    - headers:
+        devtio:
+          exact: release1
+    route:
+    - destination:
+        host: b
+        subset: v2
+    appendHeaders:
+      b-from-release-header: b
+  - route:
+    - destination:
+        host: b
+        subset: v1
+    appendHeaders:
+      b-from-default-routing: b
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: b
+  namespace: dummy
+spec:
+  host: b
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2

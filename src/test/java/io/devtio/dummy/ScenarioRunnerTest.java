@@ -4,7 +4,6 @@ import io.devtio.dummy.service.setups.ScenarioLoader;
 import io.devtio.dummy.service.setups.SetupService;
 import io.devtio.dummy.service.setups.model.NamespaceModel;
 import io.kubernetes.client.ApiException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

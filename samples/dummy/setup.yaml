@@ -1,6 +1,6 @@
 
 # INSTALL
-# kubectl apply -f samples/a/setup.yaml
+# kubectl apply -f samples/dummy/setup.yaml
 #
 # TESTS
 #

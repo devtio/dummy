@@ -4,8 +4,8 @@
 #
 # TESTS
 #
-# curl -vvk http://dummy-gateway.192.168.99.100.nip.io:31380/hops?a,b
-# curl -vvk -H "x-client-id: fancy" http://dummy-gateway.192.168.99.100.nip.io:31380/hops?a,b
+# curl http://dummy.35.197.176.190.nip.io/hops?a,b,a
+# curl -H "x-client-id: fancy" http://dummy.35.197.176.190.nip.io/hops?a,b,a
 #
 
 ---
@@ -284,6 +284,8 @@ kind: Gateway
 metadata:
   name: dummy-gateway
   namespace: dummy
+  labels:
+    io.devtio.canary/managed: "true"
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -293,7 +295,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "dummy.35.197.185.132.nip.io"
+    - dummy.35.197.176.190.nip.io
 
 
 ---
@@ -305,9 +307,11 @@ kind: VirtualService
 metadata:
   name: dummy-vs
   namespace: dummy
+  labels:
+    io.devtio.canary/managed: "true"
 spec:
   hosts:
-  - dummy.35.197.185.132.nip.io
+  - dummy.35.197.176.190.nip.io
   gateways:
   - dummy-gateway
   http:
@@ -343,6 +347,8 @@ kind: VirtualService
 metadata:
   name: a
   namespace: dummy
+  labels:
+    io.devtio.canary/managed: "true"
 spec:
   hosts:
   - a
@@ -372,6 +378,9 @@ metadata:
   namespace: dummy
 spec:
   host: a
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
   subsets:
   - name: v1
     labels:
@@ -389,6 +398,8 @@ kind: VirtualService
 metadata:
   name: b
   namespace: dummy
+  labels:
+    io.devtio.canary/managed: "true"
 spec:
   hosts:
   - b
